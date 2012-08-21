@@ -1,34 +1,22 @@
-# Django para todos
----
+% Django para todos
+% Matías Iturburu
+% Córdoba 2012
 
-# Django para todos
+# ??
 
-Django es un framework, escrito en python, para desarrollo web
----
+## Python
 
-# Framework
+- Lenguaje interpretado, multiparadigma.
+- Sintaxis liviana (sin llaves, bloques determinados por indentación).
+- Baterías incluidas.
 
-Conjunto de bibliotecas y buenas prácticas para una tarea específica.
+## Framework
 
-.notes: Una palabreja que no significa nada por si sola.
----
+- Conjunto de bibliotecas para un objetivo específica.
+- Facilitan tareas repetitivas
+- Buenas prácticas.
 
-# Python
-
-Lenguaje interpretado, multiparadigma, con una sintaxis liviana.
-
-Baterías incluidas.
-
-.notes: Por supuesto el lenguaje hace mucha diferencia.
-Sin embargo a esta altura hay entornos similares en diferentes lenguajes.
----
-
-# Desarrollo web
-
-Esto SI es lo importante.
----
-
-# Desarrollo web
+## Desarrollo web
 
 - Aplicaciones con una arquitectura en tres capas:
   - Persistencia.
@@ -37,37 +25,35 @@ Esto SI es lo importante.
 - Variedad de clientes.
 - Servidor centralizado.
 
-... Yada, yada. Los noventa fueron hace 20 años!
----
 
-# Desarrollo web
+---------------
 
-Django toma asunciones sobre *como* hay que hacer desarrollo web.
+# Django
+
+## Asunciones sobre *como* hay que hacer desarrollo web.
 
 - Patrón basado en MVC (con diferencias importantes).
 - Baterías Incluidas.
 - Diseño monolítico.
 - Proyectos modulares.
----
 
-# Criterio
 
-Django, perecido, pero no lo mismo.
+
+## MVC
 
 - Código SQL generado a partir de clases python.
 - Andamiaje liviano
 - Hacelo vos mismo (pero tomá estas herramientas)
----
 
-# Criterio
 
-Hay muchas maneras de hacer lo mismo. Bien podrías hacerlo de esta:
+## Hay muchas maneras de hacer lo mismo. Bien podrías hacerlo de esta:
 
 - Partir del diseño de Entidades
 - Mantené las vistas tontas y simples.
 - No te repitas.
 
-# Mucha charla, vamos a los bifes
+
+## Mucha charla, vamos a los bifes
 
 Primeros pasos, el obligatorio album de fotos.
 
@@ -83,21 +69,21 @@ Primeros pasos, el obligatorio album de fotos.
         ./demo/demo:
         __init__.py  settings.py  urls.py  wsgi.py
 
-# Mucha charla, vamos a los bifes
+---------------
 
-Ahora necesitamos una *aplicacion*
-
-.notes: Una aplicación es un paquete con un módulo *models.py*
-django usa este módulo para detectar el paquete y operar con él de varias 
-maneras
+Ahora necesitamos una *aplicacion*[1]
 
         $ cd demo
         $ django-admin.py startapp albums
         $ ls albums
         __init__.py  models.py  tests.py  views.py
 
----
-# Ya está?
+
+[1] Una aplicación es un paquete con un módulo *models.py*
+    django usa este módulo para detectar el paquete y operar con él de varias 
+    maneras
+
+## Ya está?
 
 No sé, probemos:
         
@@ -111,23 +97,22 @@ No sé, probemos:
         Quit the server with CONTROL-C.
 
 Parece que si!!
----
 
-# Ya está?
+---------------
+
+No tan exitante.
 
 ![](./img/django_wellcome.png)
 
 
-No tan exitante.
----
-
-# Yay Settings! 
+## Yay Settings! 
 
 La parte que se olvidaron cuando dijeron que era RAD.
 
 Vamos a decirle un par de cosas al framework
 
-        # settings.py
+`settings.py`
+
         DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
@@ -153,17 +138,10 @@ Vamos a decirle un par de cosas al framework
             demo, # << nuestro proyecto
             albums, # << nuestra app
         )
-        
----
 
-# Modelos
+## Modelos
 
-El corazón de django es el ORM. 
-
-.notes: Realmente es una gran herramienta sólo si nuestra aplicación tiene mucho que
-hacer con una base de datos.
-(También funciona al recez, nos permite modelar muchos problemas en terminos de
-Entidad Relación)
+El corazón de django es el ORM [2]. 
 
         from django.db import models
 
@@ -175,15 +153,20 @@ Entidad Relación)
             date = models.DateField(auto_now=True)
 
 
-        class Pic(models.Model):
+        class
+         Pic(models.Model):
             
             image = models.ImageField(upload_to='pictures')
             album = models.ForeignKey('albums.Album')    
             caption = models.CharField(max_length=100)
 
----
+[2] Realmente es una gran herramienta si nuestra aplicación tiene mucho que
+    hacer con una base de datos.
+    También funciona al recez, nos permite modelar muchos problemas en terminos de
+    Entidad Relación.
 
-# Modelos
+
+---------------
 
 Creamos las entidades en la base de datos.
 
@@ -191,29 +174,30 @@ Creamos las entidades en la base de datos.
     $ ./manage.py syncdb
     ...
 
----
 
-# Y eso es todo?
+
+## Y eso es todo?
 
 NO! Se fijaron como seguimos entrando en http://localhost:8000? 
 
 Bien es tiempo de hablar un rato más.
 
----
 
 # URL's, el admin y ponies
 
-Las URLS son la puerta a nuestra aplicación.
+Las URLS son la puerta a nuestra aplicación [3].
 
-        # settings.py
+`settings.py`
         ROOT_URLCONF = 'demo.urls'
         INSTALLED_APPS = (...
             'django.contrib.admin',
             ...
         )
 
-        # urls.py
-        
+---------------
+
+`urls.py`
+
         from django.conf.urls import patterns, include, url
 
         # Uncomment the next two lines to enable the admin:
@@ -232,12 +216,12 @@ Las URLS son la puerta a nuestra aplicación.
             # url(r'^admin/', include(admin.site.urls)),
         )
 
-.notes: `manage.py` es nuestro punto de entrada. Escucha en el puerto 8000 y mapea
-diferentes direcciones a funciones.
-Este mapeo está definido en el módulo urls.py
----
+[3] `manage.py` es nuestro punto de entrada. Escucha en el puerto 8000 y mapea
+    diferentes direcciones a funciones.
+    Este mapeo está definido en el módulo urls.py
 
-# URL's, el admin y ponies
+
+## URL's
 
         from django.conf.urls import patterns, include, url
         from django.contrib import admin
@@ -248,9 +232,7 @@ Este mapeo está definido en el módulo urls.py
              url(r'^admin/', include(admin.site.urls)),
         )
         
---- 
-
-# URL's, el admin y ponies
+---------------
 
 Le decimos a django que nos haga algunos favores.
 
@@ -262,8 +244,10 @@ Le decimos a django que nos haga algunos favores.
 
         admin.site.register(Pic)
         admin.site.register(Album)
----
-# Yay! y ahora si!??
+
+
+
+## Yay! y ahora si!??
 
 Casi, veamos:
 
@@ -272,9 +256,8 @@ Casi, veamos:
         
 ![](./img/django_admin.png)
 
----
 
-# Vamos mejor
+## Vamos mejor
 
 Tuneando el admin.
 
@@ -297,26 +280,24 @@ Tuneando el admin.
         admin.site.register(Pic, PicAdmin)
         admin.site.register(Album, AlbumAdmin)
 
----
+
 
 # Y ahora? Vistas!
 
-vistas (en django) != vistas (MVC)
+## vistas (en django) != vistas (MVC) [4]
 
-.notes: Las vistas de django encajan más bien en la parte del controlador en 
-terminos del patrón MVC.
-No estoy seguro de que se haya usado este nombre por alguna razón más que 
-anecdótica.
+[4] Las vistas de django encajan más bien en la parte del controlador en 
+    terminos del patrón MVC.
+    No estoy seguro de que se haya usado este nombre por alguna razón más que 
+    anecdótica.
 
----
-# Y ahora? Vistas!
+
+## Nuestra primera vista
 
 Reciben una `request`, hacen algo y devuelven una `response`
 
 No olvides declararlas en `urls.py`!
 
----
-# Y ahora? Vistas!
 
         from django.http import HttpResponse
 
@@ -325,9 +306,8 @@ No olvides declararlas en `urls.py`!
 
 Errr... No estamos grandes para esto?
 
----
 
-# Mejores vistas
+## Mejores vistas
 
 Las **vistas** modifican el *contexto* de nuestra petición y preparan la
 respuesta. 
@@ -335,9 +315,10 @@ respuesta.
 Generalmente esto se imprime en algún *template*.
 
 Suena como mucho? django trae las pilas que necesitás!
----
 
-# Shortcuts!
+
+
+## Shortcuts!
 
         from django.shortcuts import render
         from albums.models import Pic, Album
@@ -351,7 +332,8 @@ Suena como mucho? django trae las pilas que necesitás!
                 {'albums':albums}
             )
 
-# Not so fast cowboy
+
+## Not so fast cowboy
 
 Algunas notas sobre los settings:
 
@@ -368,8 +350,9 @@ Agreguemos algunas rutas importantes
             os.path.join(BASE_DIR, 'templates')
         )
 
----
-# Templates!
+
+
+## Templates!
 
 - Basados en texto plano, sintaxis rara pero cómoda.
 - Pueden generar varios formatos.
@@ -377,8 +360,7 @@ Agreguemos algunas rutas importantes
 
 
 
----
-# Templates!
+## Templates!
 
 Tags, variables y herencias
 
