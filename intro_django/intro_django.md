@@ -1,5 +1,5 @@
 % Django para todos
-% Matías Iturburu
+% Matías Iturburu - Taller Technologies
 % Córdoba 2012
 
 # ??
@@ -376,6 +376,8 @@ Tags, variables y herencias
         </body>
         </html>
 
+---------------
+
         #index.html
         {% extends "layout.html" %}
         {% block title %}Albums{% endblock %}
@@ -389,3 +391,4 @@ Tags, variables y herencias
             </ul>
         {% endblock %}  
 
+# 
