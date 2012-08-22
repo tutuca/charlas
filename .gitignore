@@ -1,0 +1,7 @@
+*.pdf
+*.db
+*/bin/*
+*/lib/*
+*/local/*
+*/include/*
+

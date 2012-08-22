@@ -1,122 +1,79 @@
-# Haciendo la cola con django
----
+% Haciendo colas para evitar la espera
+% Matías Iturburu - Taller Techonologies
+% Córdoba 2012
 
-# Algún ejemplo trillado
+# LO QUE?
 
-Hagamos un fotolog!!
+- Cola de Tareas
+- Distribuida
+- Asincrónica
 
-    #models.py
-    from django.db import models
+## Cola de tareas
 
-    
-    class Album(models.Model):
+- Interactuar con una API externa
+- Recargar el indice de búsqueda
+- Procesar imágenes
+... Cualquier cosa que tarde más de 200ms
 
-        name = models.CharField(max_length=100)
-        
-        
-    class Picture(models.Model):
+## Distribuida
 
-        image = models.ImageField(upload_to='images')
-        album = models.ForeignKey('pictures.Album')
+- Ejecución paralela
+- Ejecución remota
 
----
-# Algún ejemplo trillado
+## Asincrónica
 
-Hagamos un fotolog!!
-    
-    #admin.py
-    from django.contrib import admin
-    from models import Album, Picture
+- Afuera del ciclo petición/respuesta
+- Pueden ser ejecutados en secuencia 
+- O periodicamente
 
+# Por qué?
 
-    class PictureInline(admin.TabularInline):
-
-        model = Picture
-        extra = 1
-
-
-    class AlbumAdmin(admin.ModelAdmin):
-
-        inlines = [PictureInline]
-        
-
-    admin.site.register(Album, AlbumAdmin)
-    admin.site.register(Picture)
-
----
-# Listo!
-
-![admin](img/admin.png)
-
----
-
-#Listo!
-Hasta que aparece el cliente y:
-
-> EHHH, tengo que cargar las fotos de a una‽
----
-# Iteramos!
-
-    #models.py
-    from django.db.models.signals import post_save
-
-    ...
-
----
-# Iteramos!
-
-Hay que hacer algo con ese zip
----
-
-# Señales!
-
-Nos permite atar funciones a eventos determinados *eventos*
-
-    #models.py
-    from django.dispatch import receiver
-    from django.db.models.signals import post_save
-
-    ...
-
-    @reciever(post_save, sender=Album)
-    def process_attach(sender, instance, created, **kwargs):
-        
-        #Descomprimimos el zip y creamos instancias de Pictures y cosas así...
-        ...
----
-# Ahora si, Listo
-
----
-# Mientras tanto, del lado del usuario...
-
-![muertodeespera](img/tiredcompuser.jpg)
-        
-        
-- Pedidos
-- Respuestas
-- Procesamiento
 - Latencia
----
+- Separar procesos intensivos
+- Latencia
+- Mejor experiencia de usuarios
 
-# Soluciones comunes
+... Inevitable
 
-## Concurrencia!
+# Como?
+
+- Celery + RabbitMQ &gt;3 Django
+
+## Pero...
+
+- Muchas dependencias externas
+- Nada pure-python
+- Monitorear las tareas es un problema importante
+
+## Vale la pena
+
+- Herramientas maduras
+- (Persistencia + Velocidad) &gt; Complejidad
+- Bien documentado
+
+http://kombu.readthedocs.org/en/latest/introduction.html#transport-comparison
 
 
-Shared memory:
-- Hilos
-- Semaforos
+# Plantemos Apio
 
-> Global Intepreter Lock, o "Como el manejo de hilos de python apesta"
+        $ apt-get install rabbitmq-server
+        $ pip install celery, django-celery
 
-Message Passing:
+-----------------
 
-- Procesos
-- Colas de Tareas/Mensajes
-- Computación distribuida
+    
+        #settings.py
+        import djcelery
+        djcelery.setup_loader()
+        ...
+        INSTALLED_APPS = (
+        ...
+            'djcelery',
+        ...
+        )
+        
+-----------------
 
----
+## Ahora podemos usar        
 
-# Herramientas
-
-
+        
