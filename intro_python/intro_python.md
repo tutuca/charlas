@@ -6,10 +6,10 @@
 
 ## Mirando el lenguaje a lo paracaidista
 
-- Interpretado:
-- Sintaxis simple
-- Multiparadigma
-- Baterias incluidas
+>- Interpretado:
+>- Sintaxis simple
+>- Multiparadigma
+>- Baterias incluidas
 
 ## Interpretado
 
@@ -18,6 +18,13 @@ Scripts compilados a demanda a bytecode.
 Soporta extensiones en C y C++
 
 La ejecución de programas grandes es costosa en memoria (pero no tanto)
+
+Implementacion canónica en C (cpython) pero otras existen:
+
+- Jython (Java)
+- Iron Python (C#)
+- Embebido
+- Pypy (Compilación JIT)
 
 ## Sintaxis simple
 
@@ -191,3 +198,25 @@ empiezan con _.
         >>> map(lambda x: x.upper(), s)
         
         
+--------------
+
+- Todo al alcance de la mano:
+
+        $ pip search web framework
+        
+## Y que puedo hacer con esto?
+
+>- Algebra lineal, Matrices, etc: SciPy, Numpy
+>- Procesamiento de lenguaje natural: NLTk
+>- Aplicaciones de escritorio: Glade, WxWidgets
+>- Programación asincrónica: Twisted, Geventlet
+>- Desarrollo web: Django, etc
+
+## Qué es lo que no?
+
+>- Sistemas en tiempo real
+>- Compartir hilos en varios CPU
+>- Cualquier cosa que utilice mucha procesamiento matemático
+>- Controladores
+
+# Tip of the iceberg

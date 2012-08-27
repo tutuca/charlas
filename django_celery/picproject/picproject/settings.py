@@ -79,6 +79,8 @@ INSTALLED_APPS = (
     'pictures'
 )
 
+BROCKER_URL = 'amqp://pics:picproj@picproj:5672'
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
