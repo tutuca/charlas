@@ -75,6 +75,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
+    'djcelery',
     'picproject',
     'pictures'
 )
@@ -104,3 +105,6 @@ LOGGING = {
         },
     }
 }
+
+FLICKR_KEY = '3b8f7d42564bc0fa9a2537606f3d0e3a'
+FLICKR_SECRET = 'bdd323aceff0db12'
