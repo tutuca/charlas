@@ -71,48 +71,48 @@ $\centerline{\includegraphics[height=2in]{./img/mqchoices.png}}$
 
 ## Instalación
 
-        $ apt-get install rabbitmq-server
-        $ pip install celery django-celery
+    $ apt-get install rabbitmq-server
+    $ pip install celery django-celery
 
 Esto suele ser opcional, pero no duele
 
-        $ rabbitmqctl add_user myuser mypassword
-        $ rabbitmqctl add_vhost myvhost
-        $ rabbitmqctl set_permissions -p myvhost \
-            myuser ".*" ".*" ".*"
+    $ rabbitmqctl add_user myuser mypassword
+    $ rabbitmqctl add_vhost myvhost
+    $ rabbitmqctl set_permissions -p myvhost \
+        myuser ".*" ".*" ".*"
 
 
 ## Settings
 
     
-        #settings.py
-        import djcelery
-        djcelery.setup_loader()
-        ...
-        INSTALLED_APPS = (
-        ...
-            'djcelery',
-        ...
-        )
-        BROKER_URL = 'amqp://myuser:guest@myvhost:5672//'
+    #settings.py
+    import djcelery
+    djcelery.setup_loader()
+    ...
+    INSTALLED_APPS = (
+    ...
+        'djcelery',
+    ...
+    )
+    BROKER_URL = 'amqp://myuser:guest@myvhost:5672//'
         
 
 ## Ponemos a correr todo
 
-        $ ./manage.py syncdb
-        $ ./manage.py celery worker --log-leve=info
+    $ ./manage.py syncdb
+    $ ./manage.py celery worker --log-leve=info
         
 # Definiendo tareas
 
 
 ## La tarea más simple
 
-        #tasks.py
-        from celery import task
+    #tasks.py
+    from celery import task
 
-        @task()
-        def add(x, y):
-            return x + y
+    @task()
+    def add(x, y):
+        return x + y
 
 >  Las tareas deben vivir en módulo y tener un nombre único.
 >  Si se aplican multiples decoradores, hay que asegurarse que `celery.task`
@@ -120,19 +120,19 @@ Esto suele ser opcional, pero no duele
 
 ## Llamando nuestra tarea
             
-            # view.py
-            
-            from django.shortcuts import render
-            import tasks
+    # view.py
 
-            def my_view(request):
-                    
-                tasks.add.delay(5,2)
-                return render(
-                    request,
-                    "my_template.html", 
-                    {'message:'Tarea encolada'},
-                )
+    from django.shortcuts import render
+    import tasks
+
+    def my_view(request):
+            
+        tasks.add.delay(5,2)
+        return render(
+            request,
+            "my_template.html", 
+            {'message':'Tarea encolada'},
+        )
 
 ## Llamando nuestra tarea
 
@@ -156,17 +156,17 @@ Esto suele ser opcional, pero no duele
 
 Llamar una tarea devuelve un `AsyncResult`.
 
-        >>> result = add.delay(4, 4)
-        >>> result.ready() # True si terminó.
-        False
-        >>> result.result # No hay resultado aún.
-        None
-        >>> result.get() # Espera y devuelve el resultado.
-        8
-        >>> result.result 
-        8
-        >>> result.successful() # True si no hubo errores.
-        True
+    >>> result = add.delay(4, 4)
+    >>> result.ready() # True si terminó.
+    False
+    >>> result.result # No hay resultado aún.
+    None
+    >>> result.get() # Espera y devuelve el resultado.
+    8
+    >>> result.result 
+    8
+    >>> result.successful() # True si no hubo errores.
+    True
 
 ## Manejando estados y resultados
 
@@ -176,7 +176,7 @@ Llamar una tarea devuelve un `AsyncResult`.
 >-  Permite resumir la tarea si hubo algún problema
 >-  Ya que estamos en el baile conviene usar Redis:
 
-        CELERY_RESULT_BACKEND = "redis://:password@host:port/db"
+    CELERY_RESULT_BACKEND = "redis://:password@host:port/db"
 
 # Eso es todo?
 
@@ -192,18 +192,18 @@ Llamar una tarea devuelve un `AsyncResult`.
 Tareas que se repiten con cierta frecuencia
 Se agregan en `settings.py`
 
-        CELERYBEAT_SCHEDULE = {
-            # Cada lunes a las 7:30
-            'every-monday-morning': {
-                'task': 'tasks.add',
-                'schedule': crontab(
-                    hour=7, 
-                    minute=30, 
-                    day_of_week=1
-                ),
-                'args': (16, 16),
-            },
-        }
+    CELERYBEAT_SCHEDULE = {
+        # Cada lunes a las 7:30
+        'every-monday-morning': {
+            'task': 'tasks.add',
+            'schedule': crontab(
+                hour=7, 
+                minute=30, 
+                day_of_week=1
+            ),
+            'args': (16, 16),
+        },
+    }
 
 ## Canvas
 
