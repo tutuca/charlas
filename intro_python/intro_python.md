@@ -119,14 +119,34 @@ Comprehension de listas, sets* y diccionarios[1]:
 [1] disponible a partir de python 2.7
 
 --------------
+
+Cierres:
+
+        def counter(x):
+            def inc(y):
+                return x+y
+            return inc
+
+Decoradores:
+
+        def decorate(func):
+            print "Decorating"
+            def wrapped(*args, **kwargs):
+                print "ZOMG!"
+                return func(*args, **kwargs)
+            return wrapped
+            
+        @decorate
+        def hello(who):
+            print "HAI DER %s" %who
         
-Programación orientada a objetos:
+## Programación orientada a objetos:
 
 Todo es un `object`. Argumentos, funciones y primitivas.
 
 --------------
 
-Herencia intuitiva, soporte para herencia múltiple.
+Herencia
 
         >> class A: 
         ...    name='A'
@@ -139,6 +159,8 @@ Herencia intuitiva, soporte para herencia múltiple.
 
         >>> class B:
         ...    name='B'
+
+Herencia múltiple
 
         >>> class C(A, B): 
         ...    pass
@@ -179,6 +201,15 @@ empiezan con _.
 
 ## Baterías incluídas
 
+- Métodos built-in
+
+        >>> s = "dabale arroz a la zorra el abad".split(' ')
+        ['dabale', 'arroz', 'a', 'la', 'zorra', 'el', 'abad']
+        >>> map(lambda x: x.upper(), s)
+        
+        
+--------------
+
 - La distribución incluye una biblioteca standard muy completa
 
         >>> import math
@@ -188,21 +219,6 @@ empiezan con _.
         10.0
 
         $ python -m SimpleHTTPServer
-        
---------------
-
-- Métodos built-in concisos
-
-        >>> s = "dabale arroz a la zorra el abad".split(' ')
-        ['dabale', 'arroz', 'a', 'la', 'zorra', 'el', 'abad']
-        >>> map(lambda x: x.upper(), s)
-        
-        
---------------
-
-- Todo al alcance de la mano:
-
-        $ pip search web framework
         
 ## Y que puedo hacer con esto?
 
