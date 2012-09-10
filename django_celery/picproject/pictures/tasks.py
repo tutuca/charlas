@@ -1,13 +1,12 @@
 from celery import task
-from flickrapi import FlickrAPI
+from flickrapi import FlickrAPI, FlickrError
 from googlemaps import GoogleMaps
 from django.conf import settings
 import models
 import json
 
 
-flickr = FlickrAPI(settings.FLICKR_KEY,
-               settings.FLICKR_SECRET)
+flickr = FlickrAPI(settings.FLICKR_KEY, settings.FLICKR_SECRET)
 
 gm = GoogleMaps(settings.GOOGLE_KEY)
 
@@ -20,10 +19,14 @@ def process_pictures(album):
             x.get('id'),
             x.get('secret')
         )
-        location = flickr.photos_geo_getLocation(x.get('id'))
-        import ipdb; ipdb.set_trace()
+        try:
+            location = flickr.photos_geo_getLocation(photo_id=x.get('id'))            
+        except FlickrError:
+            location = None
+        
         pic = models.Picture(
             album=album,
             image_url=pic_url
         )
         pic.save()
+        print pic

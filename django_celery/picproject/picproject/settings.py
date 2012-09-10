@@ -65,7 +65,9 @@ ROOT_URLCONF = 'picproject.urls'
 
 WSGI_APPLICATION = 'picproject.wsgi.application'
 
-TEMPLATE_DIRS = ()
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'templateste')
+)
 
 INSTALLED_APPS = (
     'django.contrib.auth',

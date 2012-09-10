@@ -11,6 +11,11 @@ class Album(models.Model):
 
     def __unicode__(self):
         return self.name
+        
+    @models.permalink
+    def get_absolute_url(self):
+        return ('album', (), {'id':self.pk})
+
 
 class Picture(models.Model):
 
@@ -23,4 +28,4 @@ class Picture(models.Model):
 
 @receiver(post_save, sender=Album)
 def start_task(sender, **kwargs):
-    tasks.process_pictures(kwargs['instance'])
+    tasks.process_pictures.delay(kwargs['instance'])

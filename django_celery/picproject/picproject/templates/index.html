@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Pictures - Celery Powered</title>
+    <meta charset='UTF-8' />
+    <style>
+      body {
+        font: 100% "Droid Sans", Helvetica, sans-serif;
+      }
+      #albums {
+        float:right;
+        width:10em;
+        
+      }
+    </style>
+  </head>
+  <body>
+  {% if messages %}
+      
+
+  <ul id="messages">
+    {% for message in messages %}
+      <li>{{message}}</li>
+    {% endfor %}
+
+      
+  </ul>
+  {% endif %}  
+  <form action="/album/" method="post">{% csrf_token %}
+      {{form.as_p}}
+  
+      <p><input type="submit" value="Save" /></p>
+  </form>
+  <ol id="albums">
+      <li><a href="/album/">home</li>
+    {% for album in albums %}
+      <li><a href="{{album.get_absolute_url}}">{{album}}</a> ({{album.picture_set.all|length}})</li>
+    {% endfor %}
+  </ol>
+  {% if album %}
+  <ul>
+      {% for img in album.picture_set.all %}
+      <li><img src="{{img.image_url}}" /></li>
+      {% endfor %}
+  </ul>
+  {% endif %}  
+  </body>
+</html>
