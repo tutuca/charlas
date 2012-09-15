@@ -40,7 +40,13 @@
   {% if album %}
   <ul>
       {% for img in album.picture_set.all %}
-      <li><img src="{{img.image_url}}" /></li>
+      <li><img src="{{img.image_url}}" />
+        {% if img.location %}
+          {{img.location}}
+          <img src="{{img.map_url}}">
+        {% endif %}
+      </li>
+
       {% endfor %}
   </ul>
   {% endif %}  

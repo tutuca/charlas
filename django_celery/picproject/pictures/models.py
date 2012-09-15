@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.db import models
 from django.dispatch import receiver
 from django.db.models.signals import post_save
@@ -21,8 +23,7 @@ class Picture(models.Model):
 
     image_url = models.URLField()
     album = models.ForeignKey('pictures.Album')
-    latitude = models.FloatField(blank=True, null=True)
-    longitude = models.FloatField(blank=True, null=True)
+    location = models.CharField(max_length=250, blank=True, null=True)
     map_url = models.URLField(blank=True, null=True)
     
 

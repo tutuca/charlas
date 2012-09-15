@@ -12,10 +12,9 @@
 
 ## Cola de tareas
 
-- Interactuar con una API externa
-- Recargar el indice de búsqueda
-- Procesar imágenes
-... Cualquier cosa que tarde más de 200ms
+- Ejecuta tareas en secuencia.
+- O periodicamente
+
 
 ## Distribuida
 
@@ -25,14 +24,16 @@
 ## Asincrónica
 
 - Afuera del ciclo petición/respuesta
-- Pueden ser ejecutados en secuencia 
-- O periodicamente
 
-# Por qué?
+----------------------
 
-## Mejor para todos
+> La rueda más reinventada de los últimos tiempso
 
-- Latencia
+
+# Para qué?
+
+## Mejorar la experiencia del usuario y la nuestra.
+
 - Separar procesos intensivos
 - Latencia
 - Mejor experiencia de usuarios
@@ -48,9 +49,9 @@ $\centerline{\includegraphics[height=2in]{./img/mqchoices.png}}$
 
 ## Simplemente usá RabbitMQ
 
-- (Celery + RabbitMQ) $\heartsuit$  Django [^1]
+- (Celery + RabbitMQ) $\heartsuit$  Django 
 
-[^1]: Django no es requerido para utilizar Celery.
+Django no es requerido para utilizar Celery.
 
 ## Pero...
 
@@ -73,6 +74,8 @@ $\centerline{\includegraphics[height=2in]{./img/mqchoices.png}}$
 
     $ apt-get install rabbitmq-server
     $ pip install celery django-celery
+
+-------------------
 
 Esto suele ser opcional, pero no duele
 
@@ -103,7 +106,6 @@ Esto suele ser opcional, pero no duele
     $ ./manage.py celery worker --log-leve=info
         
 # Definiendo tareas
-
 
 ## La tarea más simple
 
@@ -209,13 +211,13 @@ Se agregan en `settings.py`
 
 Define subtareas y varias opciones de relación.
 
->- Subtareas:
+- Subtareas:
 
         >>> from celery import subtask
         >>> subtask('tasks.add', args=(2, 2), countdown=10)
         tasks.add(2, 2)
 
->- Callbacks:
+- Callbacks:
 
         add.apply_async((2, 2), link=other_task.subtask())
 
@@ -229,7 +231,7 @@ Más: http://docs.celeryproject.org/en/latest/userguide/canvas.html
 Incluida en la distribución
 
         $ celery status
-        $ celery result -t tasks.add 4e196aa4-0141-4601-8138-7aa33db0f577
+        $ celery result -t tasks.add 4e196aa4...
         $ celery inspect active
         $ celery purge
 
