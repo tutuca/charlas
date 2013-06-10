@@ -42,9 +42,14 @@
 
 ... Cualquier cosa que tarde más de 200ms
 
-# Por qué?
+----------------------
 
-## Mejor para todos
+> La rueda más reinventada de los últimos tiempso
+
+
+# Para qué?
+
+## Mejorar la experiencia del usuario y la nuestra.
 
 - Latencia
 - Consistencia eventual
@@ -61,9 +66,9 @@ $\centerline{\includegraphics[height=2in]{./img/mqchoices.png}}$
 
 ## Simplemente usá RabbitMQ
 
-- (Celery + RabbitMQ) $\heartsuit$  Django [^1]
+- (Celery + RabbitMQ) $\heartsuit$  Django 
 
-[^1]: Django no es requerido para utilizar Celery.
+Django no es requerido para utilizar Celery.
 
 ## Pero...
 

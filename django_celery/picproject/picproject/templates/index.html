@@ -51,11 +51,21 @@
   <p>{{res.ready}} | {{res.get}} | {{res.successful}}</p>
   <ul id="album">
       {% for img in album.picture_set.all %}
+<<<<<<< HEAD
        <li>
            <img class="pic" src="{{img.image_url}}" />
            <p><img src="{{img.map_url}}"/> 
            {{img.location}}</p>
        </details></li>
+=======
+      <li><img src="{{img.image_url}}" />
+        {% if img.location %}
+          {{img.location}}
+          <img src="{{img.map_url}}">
+        {% endif %}
+      </li>
+
+>>>>>>> 5a2a963e504acfd60ceb92dae3eb06d7d0f06798
       {% endfor %}
   </ul>
   {% endif %}  
