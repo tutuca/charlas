@@ -7,10 +7,18 @@
       body {
         font: 100% "Droid Sans", Helvetica, sans-serif;
       }
-      #albums {
+      form {
         float:right;
-        width:10em;
-        
+        width:20em;
+      }
+      #albums {
+        clear:right;
+        float:right;
+        width:20em;
+        list-style: decimal inside;
+      }
+      .pic {
+        display: block;
       }
     </style>
   </head>
@@ -27,6 +35,7 @@
   </ul>
   {% endif %}  
   <form action="/album/" method="post">{% csrf_token %}
+      <h2>New Album</h2>
       {{form.as_p}}
   
       <p><input type="submit" value="Save" /></p>
@@ -38,9 +47,15 @@
     {% endfor %}
   </ol>
   {% if album %}
-  <ul>
+  <h1>{{album.name}} - ({{album.picture_set.all|length}}) pics</h1>
+  <p>{{res.ready}} | {{res.get}} | {{res.successful}}</p>
+  <ul id="album">
       {% for img in album.picture_set.all %}
-      <li><img src="{{img.image_url}}" /></li>
+       <li>
+           <img class="pic" src="{{img.image_url}}" />
+           <p><img src="{{img.map_url}}"/> 
+           {{img.location}}</p>
+       </details></li>
       {% endfor %}
   </ul>
   {% endif %}  

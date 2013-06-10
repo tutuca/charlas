@@ -21,11 +21,7 @@ class Picture(models.Model):
 
     image_url = models.URLField()
     album = models.ForeignKey('pictures.Album')
-    latitude = models.FloatField(blank=True, null=True)
-    longitude = models.FloatField(blank=True, null=True)
+    location = models.CharField(max_length=200, blank=True, null=True)
     map_url = models.URLField(blank=True, null=True)
     
 
-@receiver(post_save, sender=Album)
-def start_task(sender, **kwargs):
-    tasks.process_pictures.delay(kwargs['instance'])

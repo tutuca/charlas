@@ -1,6 +1,6 @@
-% Haciendo colas para evitar la espera | django y celery
-% Matías Iturburu - Taller Techonologies
-% Córdoba 2012
+% Haciendo colas para evitar la espera 
+% django y celery
+% Matías Iturburu - Taller Techonologies -Córdoba 2012
 
 # LO QUE?
 
@@ -12,33 +12,46 @@
 
 ## Cola de tareas
 
-- Interactuar con una API externa
-- Recargar el indice de búsqueda
-- Procesar imágenes
-... Cualquier cosa que tarde más de 200ms
+- Permite organizar trabajos para ser procesados después
+- Pueden ser ejecutados en secuencia 
+- O periodicamente
 
 ## Distribuida
 
-- Ejecución remota
-- Ejecución paralela 
+- **Ejecución remota**
+    Las tareas pueden ser locales, ser llamadas a APIS externas 
+  o correr en otro u otros servidores.
+- **Ejecución paralela**
+    Varias tareas puede correr al mismo tiempo
+
 
 ## Asincrónica
 
 - Afuera del ciclo petición/respuesta
-- Pueden ser ejecutados en secuencia 
-- O periodicamente
+
+## Un problema difícil.
+
+## Solucionado muchas veces.
+
+# Cuando?
+
+## Que cosas nos conviene delegar?
+>- Interactuar con una API externa
+>- Recargar el indice de búsqueda
+>- Procesar imágenes
+
+... Cualquier cosa que tarde más de 200ms
 
 # Por qué?
 
 ## Mejor para todos
 
 - Latencia
+- Consistencia eventual
 - Separar procesos intensivos
-- Latencia
-- Mejor experiencia de usuarios
 
 >   No hace las cosas inmediatamente más rápidas, sí nos permite dar 
-    mejores respuestas.
+    más sensación de velocidad.
 
 # Como?
 
@@ -56,7 +69,6 @@ $\centerline{\includegraphics[height=2in]{./img/mqchoices.png}}$
 
 >- Complejidad
 >- Erlang !?
->- Feedback
 
 ## Vale la pena
 
@@ -74,6 +86,8 @@ $\centerline{\includegraphics[height=2in]{./img/mqchoices.png}}$
     $ apt-get install rabbitmq-server
     $ pip install celery django-celery
 
+-----------------
+
 Esto suele ser opcional, pero no duele
 
     $ rabbitmqctl add_user myuser mypassword
@@ -81,9 +95,7 @@ Esto suele ser opcional, pero no duele
     $ rabbitmqctl set_permissions -p myvhost \
         myuser ".*" ".*" ".*"
 
-
 ## Settings
-
     
     #settings.py
     import djcelery
@@ -100,10 +112,10 @@ Esto suele ser opcional, pero no duele
 ## Ponemos a correr todo
 
     $ ./manage.py syncdb
-    $ ./manage.py celery worker --log-leve=info
-        
-# Definiendo tareas
+    $ ./manage.py celery worker --log-level=info
+    $ ./manage.py runserver
 
+# Definiendo tareas
 
 ## La tarea más simple
 
@@ -209,13 +221,13 @@ Se agregan en `settings.py`
 
 Define subtareas y varias opciones de relación.
 
->- Subtareas:
+- Subtareas:
 
         >>> from celery import subtask
         >>> subtask('tasks.add', args=(2, 2), countdown=10)
         tasks.add(2, 2)
 
->- Callbacks:
+- Callbacks:
 
         add.apply_async((2, 2), link=other_task.subtask())
 
@@ -229,7 +241,7 @@ Más: http://docs.celeryproject.org/en/latest/userguide/canvas.html
 Incluida en la distribución
 
         $ celery status
-        $ celery result -t tasks.add 4e196aa4-0141-4601-8138-7aa33db0f577
+        $ celery result -t tasks.add 4e196aa4...
         $ celery inspect active
         $ celery purge
 
@@ -257,8 +269,21 @@ Más: (http://docs.celeryproject.org/en/latest/userguide/monitoring.html#django-
 
 ## Suficiente apio para todo el año
 
-- Routing
-- Workers
-- Concurrencia
+## Routing
+
+- Automático por defecto.
+- Es manejar a que cola se asigna cada tarea, no tiene que ver con 
+    la ejecución remota o local de la misma.
+
+## Workers
+    
+- Manejo muy granular.
+- Puede escalar tanto usando procesos, gevent
+
+## Concurrencia
+
+- Utiliza Eventlet.
+- Permite ejecutar miles de `green events` por.
+- Se puede mezclar con mulitprocesos de acuerdo a la necesidad
 
 # Gracias

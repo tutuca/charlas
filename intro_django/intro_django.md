@@ -19,14 +19,11 @@
 ## Desarrollo web
 
 - Aplicaciones con una arquitectura en tres capas:
-  - Persistencia.
-  - Procesamiento.
-  - Presentación
+    - Persistencia.
+    - Procesamiento.
+    - Presentación
 - Variedad de clientes.
 - Servidor centralizado.
-
-
----------------
 
 # Django
 
@@ -36,8 +33,6 @@
 - Baterías Incluidas.
 - Diseño monolítico.
 - Proyectos modulares.
-
-
 
 ## MVC
 
@@ -55,28 +50,28 @@
 
 ## Mucha charla, vamos a los bifes
 
-Primeros pasos, el obligatorio album de fotos.
+Primeros pasos, el obligatorio blog.
 
-        $ pip install django
-        $ django-admin.py startproject demo
-        $ ls -R 
-        .:
-        demo
+    $ pip install django
+    $ django-admin.py startproject demo
+    $ ls -R 
+    .:
+    demo
 
-        ./demo:
-        demo  manage.py
+    ./demo:
+    demo  manage.py
 
-        ./demo/demo:
-        __init__.py  settings.py  urls.py  wsgi.py
+    ./demo/demo:
+    __init__.py  settings.py  urls.py  wsgi.py
 
 ---------------
 
 Ahora necesitamos una *aplicacion*[1]
 
-        $ cd demo
-        $ django-admin.py startapp albums
-        $ ls albums
-        __init__.py  models.py  tests.py  views.py
+    $ cd demo
+    $ django-admin.py startapp blog
+    $ ls blog
+    __init__.py  models.py  tests.py  views.py
 
 
 [1] Una aplicación es un paquete con un módulo *models.py*
@@ -97,13 +92,6 @@ No sé, probemos:
         Quit the server with CONTROL-C.
 
 Parece que si!!
-
----------------
-
-No tan exitante.
-
-![](./img/django_wellcome.png)
-
 
 ## Yay Settings! 
 
@@ -136,29 +124,35 @@ Vamos a decirle un par de cosas al framework
             # Uncomment the next line to enable admin documentation:
             # 'django.contrib.admindocs',
             demo, # << nuestro proyecto
-            albums, # << nuestra app
+            blog, # << nuestra app
         )
 
 ## Modelos
 
 El corazón de django es el ORM [2]. 
 
-        from django.db import models
+from django.db import models
 
+    class BlogPost(models.Model):
+        """A post on a blog"""
+        
+        title = models.CharField(max_length=100)
+        content = models.TextField()
+        category = models.ForeignKey('blog.Category')
+        date = models.DateTimeField(auto_now=True)
+        def __unicode__(self):
+            return self.title
 
-        class Album(models.Model):
+        @models.permalink
+        def get_absolute_url(self):
+            return ('post_detail', [self.pk])
 
-            name = models.CharField(max_length=100)
-            description = models.TextField()
-            date = models.DateField(auto_now=True)
+    class Category(models.Model):
+        """A category duh"""
+        
+        name = models.CharField(max_length=100)
+        parent = models.ForeignKey('blog.Category', blank=True, null=True)
 
-
-        class
-         Pic(models.Model):
-            
-            image = models.ImageField(upload_to='pictures')
-            album = models.ForeignKey('albums.Album')    
-            caption = models.CharField(max_length=100)
 
 [2] Realmente es una gran herramienta si nuestra aplicación tiene mucho que
     hacer con una base de datos.
@@ -170,10 +164,8 @@ El corazón de django es el ORM [2].
 
 Creamos las entidades en la base de datos.
 
-
     $ ./manage.py syncdb
     ...
-
 
 
 ## Y eso es todo?
@@ -236,15 +228,14 @@ Las URLS son la puerta a nuestra aplicación [3].
 
 Le decimos a django que nos haga algunos favores.
 
-        #albums/admin.py
+        #blog/admin.py
         
         from django.contrib import admin
-        from albums.models import Pic, Album
+        from blog.models import Category, BlogPost
 
 
-        admin.site.register(Pic)
-        admin.site.register(Album)
-
+        admin.site.register(Category)
+        admin.site.register(BlogPost)
 
 
 ## Yay! y ahora si!??
@@ -253,8 +244,6 @@ Casi, veamos:
 
         $ manage.py syncdb # porque habilitamos `contrib.admin`
         $ manage.py runserver # apuntamos a http://localhost:8000/admin/
-        
-![](./img/django_admin.png)
 
 
 ## Vamos mejor
@@ -262,25 +251,18 @@ Casi, veamos:
 Tuneando el admin.
 
         from django.contrib import admin
-        from albums.models import Pic, Album
+        from blog.models import Category, BlogPost
 
 
-        class PicInLine(admin.TabularInline):
-            model = Pic
-            extra = 1
-
-        class Pic(admin.ModelAdmin):
-            list_display = ('image', 'album', 'caption')
-            list_filter = ('album', )
+        class CategoryAdmin(admin.ModelAdmin):
+            list_display = ('name', 'parent')
+            list_filter = ('blogpost', )
             
-        class AlbumAdmin(admin.ModelAdmin):
-            inlines = [PicInLine]
-            list_display = ('name', 'date')
+        class BlogPostAdmin(admin.ModelAdmin):
+            list_display = ('title', 'date', 'category')
 
-        admin.site.register(Pic, PicAdmin)
-        admin.site.register(Album, AlbumAdmin)
-
-
+        admin.site.register(Category, CategoryAdmin)
+        admin.site.register(BlogPost, BlogPostAdmin)
 
 # Y ahora? Vistas!
 
@@ -316,21 +298,28 @@ Generalmente esto se imprime en algún *template*.
 
 Suena como mucho? django trae las pilas que necesitás!
 
-
-
 ## Shortcuts!
 
-        from django.shortcuts import render
-        from albums.models import Pic, Album
+    from django.shortcuts import render, get_object_or_404
+    from blog.models import Category, BlogPost
 
-        ...
-        def album_list(request):
-            albums = Album.objects.all()
-            return render(
-                request,
-                'index.html',
-                {'albums':albums}
-            )
+
+    def post_list(request):
+        posts = BlogPost.objects.all()
+        return render(
+            request,
+            'index.html',
+            {'posts':posts}
+        )
+
+    def post_detail(request, album_id=None):
+        post = get_object_or_404(BlogPost, pk=album_id)
+        return render (
+            request,
+            'post.html',
+            {'post':post}
+        )
+
 
 
 ## Not so fast cowboy
@@ -350,14 +339,11 @@ Agreguemos algunas rutas importantes
             os.path.join(BASE_DIR, 'templates')
         )
 
-
-
 ## Templates!
 
 - Basados en texto plano, sintaxis rara pero cómoda.
 - Pueden generar varios formatos.
-- Corren en un entorno seguro, no pueden acceder a funciones que empiezan con _
-
+- Corren en un entorno seguro, no pueden acceder a metodos o atributos "privados" (esos con _)
 
 
 ## Templates!
@@ -365,30 +351,61 @@ Agreguemos algunas rutas importantes
 Tags, variables y herencias
 
         #layout.html
-        <!doctype html>
-        <html lang="es-AR">
+        <!DOCTYPE html>
+        <html>
         <head>
-            <meta charset="utf-8">
-            <title>{% block title %}Bienvenido{% endblock %}</title>
+            <title>{%block title%}blog{%endblock%}</title>
         </head>
         <body>
-        {% block body %}{% endblock %}
+        {% block content %}
+        {% endblock %}
         </body>
         </html>
 
 ---------------
 
-        #index.html
-        {% extends "layout.html" %}
-        {% block title %}Albums{% endblock %}
-        {% block body %}
-            <ul>
-            {% for album in albums %}
-                <li>{{album.name}}</li>
-            {% empty %}        
-                </li>No hay albums aún</li>
-            {% endfor %}
-            </ul>
-        {% endblock %}  
+    #index.html
+    {% extends "layout.html" %}
+    {% block content %}
+    <h2>Posts on a Blog</h2>
+    <ul>
+        {% for post in posts %}
+        <li>
+            <h1><a href="{{post.get_absolute_url}}">{{post.title}}</a></h1>
+            <p>{{post.content|truncatewords:'20'}}</p>
+            <p>in {{post.category}}</p>
+            
+        </li>
+            
+        {% endfor %}
+    </ul>   
+    {% endblock content %}
 
-# 
+----------------
+
+    {% extends "layout.html" %}
+    {% block title %}{{post.title}}{% endblock title %}
+    {% block content %}
+        <h2><a href="/">Home</a></h2>
+        <h1><a href="{{post.get_absolute_url}}">{{post.title}}</a></h1>
+        <p>{{post.content}}</p>
+        <p>in {{post.category}}</p>
+            
+
+    {% endblock content %}
+
+## Que más hay en la caja?
+
+- Contrib
+- Señales
+- RSS, Comments, Profiles y Registración
+
+## Por donde sigue?
+
+- Pasar a producción (fabric, mod_wsgi)
+- Integrar con herramientas externas (celery, haystack)
+- Un mundo de sensaciones
+
+# Muchas gracias
+
+

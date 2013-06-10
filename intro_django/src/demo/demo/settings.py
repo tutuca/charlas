@@ -1,7 +1,7 @@
-# Django settings for demo project.
 import os
 
 BASE_DIR = os.path.dirname(__file__)
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -80,7 +80,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'wpgx-h&amp;6l5g9c$)ql#*1zp*-vaw!!7n9y^@(89+d_*1nfszfh+'
+SECRET_KEY = 'b=x_bma14v!^kdob-n(i)r99@5i6*7v2u3u(@#ppydtv7))^*4'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -105,9 +105,7 @@ ROOT_URLCONF = 'demo.urls'
 WSGI_APPLICATION = 'demo.wsgi.application'
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
+    os.path.join(BASE_DIR, 'templates')
 )
 
 INSTALLED_APPS = (
@@ -117,11 +115,12 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
+    'django.contrib.admindocs',
     'demo',
-    'albums',
+    'blog'
 )
 
 # A sample logging configuration. The only tangible logging

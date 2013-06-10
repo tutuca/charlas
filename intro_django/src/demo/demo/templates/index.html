@@ -1,11 +1,15 @@
 {% extends "layout.html" %}
-{% block title %}Albums{% endblock %}
-{% block body %}
-    <ul>
-    {% for album in albums %}
-        <li>{{album.name}}</li>
-    {% empty %}        
-        </li>No hay albums aún</li>
+{% block content %}
+<h2>Posts on a Blog</h2>
+<ul>
+    {% for post in posts %}
+    <li>
+        <h1><a href="{{post.get_absolute_url}}">{{post.title}}</a></h1>
+        <p>{{post.content|truncatewords:'20'}}</p>
+        <p>in {{post.category}}</p>
+        
+    </li>
+        
     {% endfor %}
-    </ul>
-{% endblock %}  
+</ul>   
+{% endblock content %}

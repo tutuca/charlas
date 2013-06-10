@@ -20,13 +20,22 @@ def process_pictures(album):
             x.get('secret')
         )
         try:
-            location = flickr.photos_geo_getLocation(photo_id=x.get('id'))            
+            loc = flickr.photos_geo_getLocation(photo_id=x.get('id'))
         except FlickrError:
-            location = None
+            loc = None
         
+
         pic = models.Picture(
             album=album,
             image_url=pic_url
         )
+        if loc is not None:
+            pic.location = gm.latlng_to_address(
+                float(loc[0][0].get('latitude')),
+                float(loc[0][0].get('longitude'))
+            )
+            res = gm.local_search(pic.location)
+            pic.map_url = res['responseData']['results'][0]['staticMapUrl']
+        
         pic.save()
         print pic
