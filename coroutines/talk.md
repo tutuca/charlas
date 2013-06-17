@@ -2,8 +2,9 @@
 
 We are gonna try to:
 
-* Explore some patterns for concurrent programming used in python.
-* Introduce Futures, coroutines and generators as a control abstraction.
+* Introduce Futures, coroutines and generators as a nice control abstraction for 
+  asyncronous programming
+* By means of some light review of some python implementations.
 * Hopefully make some controversial arguments.
 
 ---
@@ -16,18 +17,27 @@ We are gonna try to:
 
 ---
 
-# Threads
+# Concurrency...
 
-The first thing most people use for concurrency.
+Has a number of half-right solution...
 
-* An independant task running inside the program.
-* Easy to create by the thousands
-* Shared program data:
-  * Non-deterministic scheduling.
-  * Non atomic operations.
-  * Locking primitives hard enough to downplay the benefits.
+You allready know about this so we'll just skeem
+
+
+----
+
+- Threads
+
+  The first thing most people use for concurrency.
+  
+  * Easy to create by the thousands - *Light*
+  * Shared program data:
+    * Non-deterministic scheduling.
+    * Non atomic operations.
+    * Locking primitives hard enough to downplay the benefits.
 
 ---
+
 
 # Coroutines
 
