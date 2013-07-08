@@ -85,10 +85,87 @@ build_lists: true
 
 - Coroutines have (N, M):
 
+
+def cosubroutine():
+    x,y = (yield) # !!
+    result = x + y
+    yield result
+
+args = (1,2)
+
+sub = cosubroutine()
+sub.next()              # start the coroutine
+result = sub.send(args) # send the values into it
+print(result)
+
   N entry points
   Take M inputs
 
 ---
+
+Better!
+
+def coroutine(f):
+    def start(*args,**kwargs):
+        co = f(*args,**kwargs)
+        co.next()
+        return co
+    return start
+
+@coroutine
+def cosubroutine():
+    x,y = (yield)
+    result = x + y
+    yield result
+
+sub = cosubroutine()
+print( sub.send((1,2)) )
+
+---
+
+Corotines (cont)
+
+Offers great oportunity for refactor:
+
+class AsyncHandler(RequestHandler):
+    @asynchronous
+    def get(self):
+        http_client = AsyncHTTPClient()
+        http_client.fetch("http://example.com",
+                          callback=self.on_fetch)
+
+    def on_fetch(self, response):
+        do_something_with_response(response)
+        self.render("template.html")
+
+---
+
+class GenAsyncHandler(RequestHandler):
+    @gen.coroutine
+    def get(self):
+        http_client = AsyncHTTPClient()
+        response = yield http_client.fetch("http://example.com")
+        do_something_with_response(response)
+        self.render("template.html")
+
+--- 
+
+Yield Magic!
+
+- Delegates excecution.
+- *Like* threads but lighter (easy to create by tens of thousands).
+- Makes context switch mechanic implicit.
+- That could not be inmediately easy to grasp.
+
+---
+
+# Futures
+
+Ok... you probably never heard of that.
+
+- Wraps async behavior in a lazy evaluation facility.
+
+
 
 - Threads
 
