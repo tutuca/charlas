@@ -1,5 +1,4 @@
-title: Overview
-build_lists: true
+Title: Overview
 
 We are gonna try to:
 
@@ -10,8 +9,7 @@ We are gonna try to:
 
 ---
 
-title: Concurrency is...
-build_lists: true
+Title : Concurrency is:
 
 - Essentially a hard problem.
 - With a number of half-correct solutions.
@@ -19,8 +17,7 @@ build_lists: true
 
 ---
 
-title: We didn't do much of this with python:
-build_lists: true
+Title: We didn't do much of this with python:
 
 - Unless you really know when to use threads. 
 - You can afford to launch enough processes.
@@ -29,8 +26,7 @@ build_lists: true
 
 ---
 
-title: Tornado.
-build_lists: true
+Title: Tornado.
 
 - Promoted as a "server framework".
 - Actually a collection of nice tools for async.
@@ -43,8 +39,7 @@ build_lists: true
 
 ---
 
-title: Tornado's I/O Loop.
-build_lists: true
+Title: Tornado's I/O Loop.
 
 You probably seen one before.
 
@@ -54,16 +49,14 @@ You probably seen one before.
 
 ---
 
-title: Coroutines
-build_lists: true
+Title: Coroutines
 
 You... actually did seen these before...
 
 
 --- 
 
-title: Coroutines
-build_lists: true
+Title: Coroutines
 
 - Subroutines have ( N=1, M=1 ):
 
@@ -72,6 +65,11 @@ build_lists: true
 
 <iframe width="800" height="500" frameborder="0" src="http://pythontutor.com/iframe-embed.html#code=def+subrutine(name+%3D+%22World!%22)%3A%0A++++print+%22Hello%22,+name%0A++++%0Asubrutine()%0Asubrutine(name%3D%22Taller!%22)%0A%0A&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=0"> </iframe>
 
+    def subrutine(name):
+        print "Hello", name
+
+    subrutine('World')
+
 ---
 
 - Generators have ( N, M=0 ):
@@ -79,27 +77,34 @@ build_lists: true
   N entry points
   Take no input
 
-<iframe width="800" height="500" frameborder="0" src="http://pythontutor.com/iframe-embed.html#code=def+generator()%3A%0A++++yield+'Hello'%0A++++yield+'Wold'%0A%0Afor+x+in+generator()%3A%0A++++print(x)%0A%0Ag+%3D+generator()%0A%0Aprint(g.next())%0Aprint(g.next())%0A%23+print(g.next())+%23+StopIteration%0A%0A&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=18"> </iframe>
+    def generator():
+        yield "Hello"
+        yield "World"
+
+    g = generator()
+    print g.next()
+    print g.next()
+    print g.next()
 
 ---
 
 - Coroutines have (N, M):
-
-
-def cosubroutine():
-    x,y = (yield) # !!
-    result = x + y
-    yield result
-
-args = (1,2)
-
-sub = cosubroutine()
-sub.next()              # start the coroutine
-result = sub.send(args) # send the values into it
-print(result)
-
   N entry points
   Take M inputs
+
+
+    def cosubroutine():
+        x,y = (yield) # !!
+        result = x + y
+        yield result
+
+    args = (1,2)
+
+    sub = cosubroutine()
+    sub.next()              # start the coroutine
+    result = sub.send(args) # send the values into it
+    print(result)
+
 
 ---
 
@@ -180,8 +185,7 @@ Ok... you probably never heard of that.
 ---
 
 
-title: Coroutines
-build_lists: true
+Title: Coroutines
 
 * Not a new thing: Conway (1963), Knuth (1980).
 * A control abstraction .
@@ -190,8 +194,7 @@ build_lists: true
 
 ---
 
-title: Coroutines
-build_lists: true
+Title: Coroutines
 
 * “The values of data local to a coroutine persist between successive
 calls”;
