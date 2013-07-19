@@ -1,4 +1,4 @@
-Title: Overview
+title: Overview
 
 We are gonna try to:
 
@@ -8,16 +8,14 @@ We are gonna try to:
 - Hopefully make some controversial arguments.
 
 ---
-
-Title : Concurrency is:
+title : Concurrency is:
 
 - Essentially a hard problem.
 - With a number of half-correct solutions.
 - We deal with more and more everyday.
 
 ---
-
-Title: We didn't do much of this with python:
+title: We didn't do much of this with python:
 
 - Unless you really know when to use threads. 
 - You can afford to launch enough processes.
@@ -25,8 +23,7 @@ Title: We didn't do much of this with python:
 - Some other number of exotic attemps (gevent, asyncoro, twisted).
 
 ---
-
-Title: Tornado.
+title: Tornado.
 
 - Promoted as a "server framework".
 - Actually a collection of nice tools for async.
@@ -38,8 +35,7 @@ Title: Tornado.
 - Futures.
 
 ---
-
-Title: Tornado's I/O Loop.
+title: Tornado's I/O Loop.
 
 You probably seen one before.
 
@@ -48,35 +44,30 @@ You probably seen one before.
 - So good that it's the basis for the upcoming async features in python's standard library.
 
 ---
-
-Title: Coroutines
+title: Coroutines
 
 You... actually did seen these before...
 
-
 --- 
+title: Subroutines
 
-Title: Coroutines
+- Have 1 entry point
+- Take only one input
 
-- Subroutines have ( N=1, M=1 ):
-
-  1 entry point
-  Take only one input
-
-<iframe width="800" height="500" frameborder="0" src="http://pythontutor.com/iframe-embed.html#code=def+subrutine(name+%3D+%22World!%22)%3A%0A++++print+%22Hello%22,+name%0A++++%0Asubrutine()%0Asubrutine(name%3D%22Taller!%22)%0A%0A&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=0"> </iframe>
-
+<pre class="prettyprint" data-lang="python">
     def subrutine(name):
         print "Hello", name
 
     subrutine('World')
-
+</pre>
 ---
 
-- Generators have ( N, M=0 ):
+title: Generators
+ 
+- Have N entry points
+- Take no input
 
-  N entry points
-  Take no input
-
+<pre class="prettyprint" data-lang="python">
     def generator():
         yield "Hello"
         yield "World"
@@ -84,15 +75,16 @@ Title: Coroutines
     g = generator()
     print g.next()
     print g.next()
-    print g.next()
-
+</pre>
 ---
 
-- Coroutines have (N, M):
-  N entry points
-  Take M inputs
+title: Coroutines
 
 
+- Have N entry points
+- Take M inputs
+
+<pre class="prettyprint" data-lang="python">
     def cosubroutine():
         x,y = (yield) # !!
         result = x + y
@@ -104,58 +96,68 @@ Title: Coroutines
     sub.next()              # start the coroutine
     result = sub.send(args) # send the values into it
     print(result)
-
+</pre>
 
 ---
 
 Better!
 
-def coroutine(f):
-    def start(*args,**kwargs):
-        co = f(*args,**kwargs)
-        co.next()
-        return co
-    return start
+<pre class="prettyprint" data-lang="python">
+    def coroutine(f):
+        def start(*args,**kwargs):
+            co = f(*args,**kwargs)
+            co.next()
+            return co
+        return start
 
-@coroutine
-def cosubroutine():
-    x,y = (yield)
-    result = x + y
-    yield result
+    @coroutine
+    def cosubroutine():
+        x,y = (yield)
+        result = x + y
+        yield result
 
-sub = cosubroutine()
-print( sub.send((1,2)) )
-
----
-
-Corotines (cont)
-
-Offers great oportunity for refactor:
-
-class AsyncHandler(RequestHandler):
-    @asynchronous
-    def get(self):
-        http_client = AsyncHTTPClient()
-        http_client.fetch("http://example.com",
-                          callback=self.on_fetch)
-
-    def on_fetch(self, response):
-        do_something_with_response(response)
-        self.render("template.html")
+    sub = cosubroutine()
+    print( sub.send((1,2)) )
+</pre>
 
 ---
 
-class GenAsyncHandler(RequestHandler):
-    @gen.coroutine
-    def get(self):
-        http_client = AsyncHTTPClient()
-        response = yield http_client.fetch("http://example.com")
-        do_something_with_response(response)
-        self.render("template.html")
+title: Coroutines offer great oportunity for refactor
+subtitle: Callback Style:
+
+<pre class="prettyprint" data-lang="python">
+    class AsyncHandler(RequestHandler):
+        @asynchronous
+        def get(self):
+            http_client = AsyncHTTPClient()
+            http_client.fetch("http://example.com",
+                              callback=self.on_fetch)
+
+        def on_fetch(self, response):
+            do_something_with_response(response)
+            self.render("template.html")
+</pre>
+
 
 --- 
 
-Yield Magic!
+
+title: Coroutines offer great oportunity for refactor
+subtitle: coroutine style:
+
+<pre class="prettyprint" data-lang="python">
+    class GenAsyncHandler(RequestHandler):
+        @gen.coroutine
+        def get(self):
+            http_client = AsyncHTTPClient()
+            response = yield http_client.fetch("http://example.com")
+            do_something_with_response(response)
+            self.render("template.html")
+</pre>
+
+--- 
+
+# Yield Magic!
 
 - Delegates excecution.
 - *Like* threads but lighter (easy to create by tens of thousands).
@@ -168,35 +170,15 @@ Yield Magic!
 
 Ok... you probably never heard of that.
 
-- Wraps async behavior in a lazy evaluation facility.
+- High level interface for asynchronously executing callable.
+- Tornado's default thread pool
 
-
-
-- Threads
-
-  The first thing most people use for concurrency.
-  
-  * Easy to create by the thousands - *Light*
-  * Shared program data:
-    * Non-deterministic scheduling.
-    * Non atomic operations.
-    * Locking primitives hard enough to downplay the benefits.
-
----
-
-
-Title: Coroutines
-
-* Not a new thing: Conway (1963), Knuth (1980).
-* A control abstraction .
-* Having a revival due the need of higly availability services.
-* Weird.
-
----
-
-Title: Coroutines
-
-* “The values of data local to a coroutine persist between successive
-calls”;
-* “The execution of a coroutine is suspended as control leaves it, only to
-carry on where
+<pre class="prettyprint" data-lang="python">
+    class GenAsyncHandler(RequestHandler):
+        <b>@gen.coroutine</b>
+        def get(self):
+            http_client = AsyncHTTPClient()
+            response = <b>yield</b> http_client.fetch("http://example.com")
+            do_something_with_response(response)
+            self.render("template.html")
+</pre>
