@@ -1,3 +1,11 @@
+
+title: Tornado.
+class: nobackground fill
+
+![Tornado ](img/tornado.gif)
+
+---
+
 title: Overview
 
 We are gonna try to:
@@ -17,18 +25,18 @@ title : Concurrency is:
 
 ---
 
+content_class: flexbox vcenter
+
+![Concurrency ](img/dining_philosophers.png)
+
+---
+
 title: We didn't do much of this with python:
 
 - Unless you really know when to use threads. 
 - You can afford to launch enough processes.
 - You can afford to setup some message transport and distribute the load.
 - Some other number of exotic attemps (gevent, asyncoro, twisted).
-
----
-
-class: nobackground fill
-
-![Tornado ](img/tornado.gif)
 
 ---
 
@@ -39,9 +47,9 @@ title: Tornado.
 
 ---
 
-- An I/O Loop
-- Corutines, Tasks.
-- Futures.
+content_class: flexbox vcenter
+
+![Tornado components ](img/tornado_components.png)
 
 ---
 
@@ -52,6 +60,13 @@ You probably seen one before.
 - Single thread.
 - Works best on top of [epoll](http://en.wikipedia.org/wiki/Epoll).
 - So good that it's the basis for the upcoming async features in python's standard library.
+
+---
+
+title: Coroutines.
+class: nobackground fill
+
+![Sagan Stare ](img/stare.gif)
 
 ---
 
@@ -84,8 +99,8 @@ title: Generators
 
 <pre class="prettyprint" data-lang="python">
     def generator():
-        yield "Hello"
-        yield "World"
+        <b>yield</b> "Hello"
+        <b>yield</b> "World"
 
     g = generator()
     print g.next()
@@ -94,8 +109,16 @@ title: Generators
 
 ---
 
-title: Coroutines
+title: Yield Magic!
 
+- Delegates excecution.
+- *Like* threads but lighter (easy to create by tens of thousands).
+- Makes context switch mechanic implicit.
+- That could not be inmediately easy to grasp.
+
+---
+
+title: Coroutines
 
 - Have N entry points
 - Take M inputs
@@ -126,7 +149,7 @@ Better!
             return co
         return start
 
-    @coroutine
+    <b>@coroutine</b>
     def cosubroutine():
         x,y = (yield)
         result = x + y
@@ -138,49 +161,34 @@ Better!
 
 ---
 
-title: Coroutines offer great oportunity for refactor
-subtitle: Callback Style:
-
-<pre class="prettyprint" data-lang="python">
-    class AsyncHandler(RequestHandler):
-        @asynchronous
-        def get(self):
-            http_client = AsyncHTTPClient()
-            http_client.fetch("http://example.com",
-                              callback=self.on_fetch)
-
-        def on_fetch(self, response):
-            do_something_with_response(response)
-            self.render("template.html")
-</pre>
-
----
-
-title: Coroutines offer great oportunity for refactor
-subtitle: coroutine style:
-
-<pre class="prettyprint" data-lang="python">
-    class GenAsyncHandler(RequestHandler):
-        @gen.coroutine
-        def get(self):
-            http_client = AsyncHTTPClient()
-            response = yield http_client.fetch("http://example.com")
-            do_something_with_response(response)
-            self.render("template.html")
-</pre>
-
----
-
-title: Yield Magic!
-
-- Delegates excecution.
-- *Like* threads but lighter (easy to create by tens of thousands).
-- Makes context switch mechanic implicit.
-- That could not be inmediately easy to grasp.
-
----
-
 title: Coroutine Trampolining:
+
+<pre class="prettyprint" data-lang="python">
+    # A subroutine
+    def add(x,y):
+        yield x+y
+
+    # A function that calls a subroutine
+    def main():
+        r = yield add(2,2)
+        print r
+        yield
+
+    def run():
+        m      = main()       
+        # An example of a "trampoline"
+        sub    = m.send(None)             
+        result = sub.send(None)
+        m.send(result)
+
+    run()
+</pre>
+---
+
+title: Greenlets
+class: nobackground fill
+
+![Dandelion ](img/dandelion.gif)
 
 ---
 
@@ -225,10 +233,41 @@ title: Yield from
         yield
 
     def gen2():
-        <b> yield from gen1()</b>
+        <b>yield from gen1()</b>
 
     driver(gen2())
 </pre>
+
+---
+
+title: Yield from Exception
+
+<pre class="prettyprint" data-lang="python">
+    def throwing_driver(g):
+        print(next(g))
+        g.throw(RuntimeError('booh'))
+
+    def gen1():
+        try:
+            val = yield 'okay'
+        except RuntimeError as exc:
+            print(exc)
+        else:
+            print(val)
+        yield
+
+    def gen2():
+        yield from gen1()  # unchanged
+
+    throwing_driver(gen2())
+</pre>
+
+---
+
+title: Futures.
+class: nobackground fill
+
+![Future is hazy an uncertain ](img/future.gif)
 
 ---
 
@@ -248,23 +287,132 @@ title: Futures
 
 title: Futures (cont.)
 
-- If you are thinking: Deferreds. You are spot on!
-- If you are thinking Monads. You are kinda... some what... spot on!
-
-
----
-
-title: Futures (cont.)
-
 <pre class="prettyprint" data-lang="python">
     class GenAsyncHandler(RequestHandler):
         <b>@gen.coroutine</b>
         def get(self):
             http_client = AsyncHTTPClient()
-            response = <b>yield</b> http_client.fetch("http://example.com")
+            response = yield http_client.<b>fetch</b>("http://example.com")
             do_something_with_response(response)
             self.render("template.html")
 </pre>
+
+---
+
+title: Futures
+
+<pre class="prettyprint" data-lang="python">
+    def fetch(self, request, callback=None, **kwargs):
+        ...
+        <b>future = TracebackFuture()</b>
+        if callback is not None:
+            callback = stack_context.wrap(callback)
+
+            def handle_future(future):
+                exc = future.exception()
+                if isinstance(exc, HTTPError) and exc.response is not None:
+                    ...
+                else:
+                    response = <b>future.result()</b>
+                self.io_loop.add_callback(callback, response)
+            <b>future.add_done_callback(handle_future)</b>
+
+</pre>
+
+---
+
+title: Futures
+
+<pre class="prettyprint" data-lang="python">
+def coroutine(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        runner = None
+        future = <b>TracebackFuture()</b>
+        ...
+        with ExceptionStackContext(handle_exception) as deactivate:
+            try:
+                result = func(*args, **kwargs)
+            except (Return, StopIteration) as e:
+                result = getattr(e, 'value', None)
+            except Exception:
+                deactivate()
+                future.set_exc_info(sys.exc_info())
+                return <b>future</b>
+</pre>
+
+---
+
+title: Futures
+
+<pre class="prettyprint" data-lang="python">
+            else:
+                if isinstance(result, types.GeneratorType):
+                    def final_callback(value):
+                        deactivate()
+                        future.set_result(value)
+                    runner = Runner(result, final_callback)
+                    runner.run()
+                    return future
+            deactivate()
+            <b>future.set_result(result)</b>
+        return <b>future</b>
+    return wrapper
+</pre>
+
+---
+
+title: Futures.
+class: nobackground fill
+
+![Turn around ](img/turn.gif)
+
+---
+
+title: Coroutines + Futures  offer great oportunity for refactor
+subtitle: Callback Style:
+
+<pre class="prettyprint" data-lang="python">
+    class AsyncHandler(RequestHandler):
+        @asynchronous
+        def get(self):
+            http_client = AsyncHTTPClient()
+            http_client.fetch("http://example.com",
+                              <b>callback=self.on_fetch</b>)
+        <b>                              
+        def on_fetch(self, response):
+            do_something_with_response(response)
+            self.render("template.html")</b>
+</pre>
+
+---
+
+title: Coroutines + Futures offer great oportunity for refactor
+subtitle: coroutine style:
+
+<pre class="prettyprint" data-lang="python">
+    class GenAsyncHandler(RequestHandler):
+        @gen.coroutine
+        def get(self):
+            http_client = AsyncHTTPClient()
+            response = <b>yield http_client.fetch("http://example.com")</b>
+            <b>do_something_with_response(response)</b>
+            self.render("template.html")
+</pre>
+
+---
+
+title: Futures (cont.)
+
+- If you are thinking: Deferreds. You are spot on!
+- If you are thinking Monads. You are kinda... some what... spot on!
+
+---
+
+title: Monads.
+class: nobackground fill
+
+![Deal with it ](img/deal-with-it.gif.gif)
 
 ---
 
