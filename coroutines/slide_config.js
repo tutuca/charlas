@@ -2,7 +2,7 @@ var SLIDE_CONFIG = {
   // Slide settings
   settings: {
     title: 'Coroutines',
-    subtitle: 'Flying kites on tornados.',
+    subtitle: 'Flying kites on Tornado.',
     useBuilds: true, // Default: true. False will turn off slide animation builds.
     enableSlideAreas: true, // Default: true. False turns off the click areas on either slide of the slides.
     enableTouch: false, // Default: true. If touch support should enabled. Note: the device must support touch.
