@@ -92,6 +92,12 @@ title: Subroutines
 
 ---
 
+title: Subroutines
+
+<iframe width="800" height="400" frameborder="0" src="http://pythontutor.com/iframe-embed.html#code=def+subrutine(name)%3A%0A++++print+%22Hello%22,+name%0A%0Asubrutine('World')&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=0"> </iframe>
+
+---
+
 title: Generators
  
 - Have N entry points
@@ -99,13 +105,20 @@ title: Generators
 
 <pre class="prettyprint" data-lang="python">
     def generator():
-        <b>yield</b> "Hello"
-        <b>yield</b> "World"
-
+        for x in ["Hello", "World"]:
+            yield x
+        
     g = generator()
     print g.next()
     print g.next()
+    # print g.next() # StopIteration
 </pre>
+
+---
+
+title: Generators
+
+<iframe width="800" height="400" frameborder="0" src="http://pythontutor.com/iframe-embed.html#code=def+generator()%3A%0A++++for+x+in+%5B%22Hello%22,+%22World%22%5D%3A%0A++++++++yield+x%0A++++%0Ag+%3D+generator()%0Aprint+g.next()%0Aprint+g.next()%0A%23+print+g.next()+%23+StopIteration&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=0"> </iframe>
 
 ---
 
@@ -125,19 +138,27 @@ title: Coroutines
 
 <pre class="prettyprint" data-lang="python">
     def cosubroutine():
-        x,y = (yield) title: !!
+        x,y = <b>(yield)</b>
         result = x + y
         yield result
 
     args = (1,2)
 
     sub = cosubroutine()
-    sub.next()              title: start the coroutine
-    result = sub.send(args) title: send the values into it
+    sub.next()              # start the coroutine
+    result = sub.send(args) # send the values into it
     print(result)
 </pre>
 
 ---
+
+title: Coroutines
+
+<iframe width="800" height="400" frameborder="0" src="http://pythontutor.com/iframe-embed.html#code=def+cosubroutine()%3A%0A++++x,y+%3D+(yield)%0A++++result+%3D+x+%2B+y%0A++++yield+result%0A%0Aargs+%3D+(1,2)%0A%0Asub+%3D+cosubroutine()%0Asub.next()++++++++++++++%23+start+the+coroutine%0Aresult+%3D+sub.send(args)+%23+send+the+values+into+it%0Aprint+result&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=0"> </iframe>
+
+---
+
+title: Coroutines
 
 Better!
 
@@ -161,6 +182,12 @@ Better!
 
 ---
 
+title: Coroutines
+
+<iframe width="800" height="400" frameborder="0" src="http://pythontutor.com/iframe-embed.html#code=def+coroutine(f)%3A%0A++++def+start(*args,**kwargs)%3A%0A++++++++co+%3D+f(*args,**kwargs)%0A++++++++co.next()%0A++++++++return+co%0A++++return+start%0A%0A%40coroutine%0Adef+cosubroutine()%3A%0A++++x,y+%3D+(yield)%0A++++result+%3D+x+%2B+y%0A++++yield+result%0A%0Asub+%3D+cosubroutine()%0Aprint(+sub.send((1,2))+)&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=16"> </iframe>
+
+---
+
 title: Coroutine Trampolining:
 
 <pre class="prettyprint" data-lang="python">
@@ -175,14 +202,22 @@ title: Coroutine Trampolining:
         yield
 
     def run():
-        m      = main()       
+        m = main()       
         # An example of a "trampoline"
-        sub    = m.send(None)             
+        sub = m.send(None)             
         result = sub.send(None)
         m.send(result)
 
     run()
 </pre>
+
+---
+
+title: Coroutine Trampolining:
+
+<iframe width="800" height="400" frameborder="0" src="http://pythontutor.com/iframe-embed.html#code=%23+A+subroutine%0Adef+add(x,y)%3A%0A++++yield+x%2By%0A%0A%23+A+function+that+calls+a+subroutine%0Adef+main()%3A%0A++++r+%3D+yield+add(2,2)%0A++++print+r%0A++++yield%0A%0Adef+run()%3A%0A++++m+%3D+main()+++++++%0A++++%23+An+example+of+a+%22trampoline%22%0A++++sub+%3D+m.send(None)+++++++++++++%0A++++result+%3D+sub.send(None)%0A++++m.send(result)%0A%0Arun()&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=0"> </iframe>
+
+
 ---
 
 title: Greenlets
@@ -222,6 +257,13 @@ title: Yield from:
 
 title: Yield from
 
+<iframe width="800" height="400" frameborder="0" src="http://pythontutor.com/iframe-embed.html#code=def+driver(g)%3A%0A++++print(next(g))%0A++++g.send(42)%0A%0Adef+gen1()%3A%0A++++val+%3D+yield+'okay'%0A++++print(val)%0A++++yield%0A%0Adef+gen2()%3A%0A++++for+i+in+gen1()%3A%0A++++++++yield+i%0A%0Adriver(gen2())&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=3&curInstr=0"> </iframe>
+
+---
+
+
+title: Yield from
+
 <pre class="prettyprint" data-lang="python">
     def driver(g):
         print(next(g))
@@ -237,6 +279,12 @@ title: Yield from
 
     driver(gen2())
 </pre>
+
+---
+
+title: Yield from
+
+<iframe width="800" height="400" frameborder="0" src="http://pythontutor.com/iframe-embed.html#code=def+driver(g)%3A%0A++++print(next(g))%0A++++g.send(42)%0A%0Adef+gen1()%3A%0A++++val+%3D+yield+'okay'%0A++++print(val)%0A++++yield%0A%0Adef+gen2()%3A%0A++++yield+from+gen1()%0A%0Adriver(gen2())&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=3&curInstr=0"> </iframe>
 
 ---
 
@@ -261,6 +309,12 @@ title: Yield from Exception
 
     throwing_driver(gen2())
 </pre>
+
+---
+
+title: Yield from Exception
+
+<iframe width="800" height="400" frameborder="0" src="http://pythontutor.com/iframe-embed.html#code=def+throwing_driver(g)%3A%0A++++print(next(g))%0A++++g.throw(RuntimeError('booh'))%0A%0Adef+gen1()%3A%0A++++try%3A%0A++++++++val+%3D+yield+'okay'%0A++++except+RuntimeError+as+exc%3A%0A++++++++print(exc)%0A++++else%3A%0A++++++++print(val)%0A++++yield%0A%0Adef+gen2()%3A%0A++++yield+from+gen1()++%23+unchanged%0A%0Athrowing_driver(gen2())&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=3&curInstr=0"> </iframe>
 
 ---
 
