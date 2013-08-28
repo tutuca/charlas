@@ -1,19 +1,19 @@
 
-title: Tornado.
-class: nobackground fill
-
-![Tornado ](img/tornado.gif)
-
----
-
 title: Overview
 
 We are gonna try to:
 
-- Introduce the coroutines and Futures as a nice control 
-  abstraction for asyncronous programming
-- By means of some light review of some python implementations.
+- Introduce the coroutines and Futures as a nice control structures for 
+  asyncronous programs
+- By means of some light review of a python framework.
 - Hopefully make some controversial arguments.
+
+---
+
+title: Tornado.
+class: nobackground fill
+
+![Tornado ](img/tornado.gif)
 
 ---
 
@@ -47,6 +47,7 @@ title: Tornado.
 
 ---
 
+title: Components of Tornado.
 content_class: flexbox vcenter
 
 ![Tornado components ](img/tornado_components.png)
@@ -72,16 +73,16 @@ class: nobackground fill
 
 title: Coroutines
 
-You... actually did seen these before...
-
-Or some of it's specific cases such as:
+- You... actually did seen these before.
+- Or some of it's specific cases such as:
 
 ---
 
 title: Subroutines
 
-- Have 1 entry point
-- Take only one input
+Have 1 entry point
+
+Take only one input
 
 <pre class="prettyprint" data-lang="python">
     def subrutine(name):
@@ -98,10 +99,13 @@ title: Subroutines
 
 ---
 
-title: Generators
+title: Generators.
  
-- Have N entry points
-- Take no input
+
+Have N entry points.
+
+Take no input.
+
 
 <pre class="prettyprint" data-lang="python">
     def generator():
@@ -133,8 +137,9 @@ title: Yield Magic!
 
 title: Coroutines
 
-- Have N entry points
-- Take M inputs
+Have N entry points
+
+Take M inputs
 
 <pre class="prettyprint" data-lang="python">
     def cosubroutine():
@@ -184,7 +189,7 @@ Better!
 
 title: Coroutines
 
-<iframe width="800" height="400" frameborder="0" src="http://pythontutor.com/iframe-embed.html#code=def+coroutine(f)%3A%0A++++def+start(*args,**kwargs)%3A%0A++++++++co+%3D+f(*args,**kwargs)%0A++++++++co.next()%0A++++++++return+co%0A++++return+start%0A%0A%40coroutine%0Adef+cosubroutine()%3A%0A++++x,y+%3D+(yield)%0A++++result+%3D+x+%2B+y%0A++++yield+result%0A%0Asub+%3D+cosubroutine()%0Aprint(+sub.send((1,2))+)&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=16"> </iframe>
+<iframe width="800" height="400" frameborder="0" src="http://pythontutor.com/iframe-embed.html#code=def+coroutine(f)%3A%0A++++def+start(*args,**kwargs)%3A%0A++++++++co+%3D+f(*args,**kwargs)%0A++++++++co.next()%0A++++++++return+co%0A++++return+start%0A%0A%40coroutine%0Adef+cosubroutine()%3A%0A++++x,y+%3D+(yield)%0A++++result+%3D+x+%2B+y%0A++++yield+result%0A%0Asub+%3D+cosubroutine()%0Aprint(+sub.send((1,2))+)&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=2&curInstr=0"> </iframe>
 
 ---
 
@@ -220,7 +225,7 @@ title: Coroutine Trampolining:
 
 ---
 
-title: Greenlets
+title: Coroutines are light.
 class: nobackground fill
 
 ![Dandelion ](img/dandelion.gif)
@@ -232,9 +237,6 @@ title: Yield from:
 - Introduced in Python 3.3
 - Allows delegation from subgenerator
 
----
-
-title: Yield from:
 
 <pre class="prettyprint" data-lang="python">
     def driver(g):
@@ -257,12 +259,13 @@ title: Yield from:
 
 title: Yield from
 
+
 <iframe width="800" height="400" frameborder="0" src="http://pythontutor.com/iframe-embed.html#code=def+driver(g)%3A%0A++++print(next(g))%0A++++g.send(42)%0A%0Adef+gen1()%3A%0A++++val+%3D+yield+'okay'%0A++++print(val)%0A++++yield%0A%0Adef+gen2()%3A%0A++++for+i+in+gen1()%3A%0A++++++++yield+i%0A%0Adriver(gen2())&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=3&curInstr=0"> </iframe>
 
 ---
 
+title: Yield from.
 
-title: Yield from
 
 <pre class="prettyprint" data-lang="python">
     def driver(g):
@@ -284,11 +287,13 @@ title: Yield from
 
 title: Yield from
 
+
 <iframe width="800" height="400" frameborder="0" src="http://pythontutor.com/iframe-embed.html#code=def+driver(g)%3A%0A++++print(next(g))%0A++++g.send(42)%0A%0Adef+gen1()%3A%0A++++val+%3D+yield+'okay'%0A++++print(val)%0A++++yield%0A%0Adef+gen2()%3A%0A++++yield+from+gen1()%0A%0Adriver(gen2())&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=3&curInstr=0"> </iframe>
 
 ---
 
 title: Yield from Exception
+
 
 <pre class="prettyprint" data-lang="python">
     def throwing_driver(g):
@@ -313,6 +318,7 @@ title: Yield from Exception
 ---
 
 title: Yield from Exception
+
 
 <iframe width="800" height="400" frameborder="0" src="http://pythontutor.com/iframe-embed.html#code=def+throwing_driver(g)%3A%0A++++print(next(g))%0A++++g.throw(RuntimeError('booh'))%0A%0Adef+gen1()%3A%0A++++try%3A%0A++++++++val+%3D+yield+'okay'%0A++++except+RuntimeError+as+exc%3A%0A++++++++print(exc)%0A++++else%3A%0A++++++++print(val)%0A++++yield%0A%0Adef+gen2()%3A%0A++++yield+from+gen1()++%23+unchanged%0A%0Athrowing_driver(gen2())&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=3&curInstr=0"> </iframe>
 
@@ -342,12 +348,15 @@ title: Futures
 title: Futures (cont.)
 
 <pre class="prettyprint" data-lang="python">
-    class GenAsyncHandler(RequestHandler):
-        <b>@gen.coroutine</b>
+    class AsyncHandler(RequestHandler):
+        <b>@asynchronous</b>
         def get(self):
             http_client = AsyncHTTPClient()
-            response = yield http_client.<b>fetch</b>("http://example.com")
-            do_something_with_response(response)
+            http_client.fetch("http://example.com",
+                              <b>callback=self.on_fetch</b>)
+                                      
+        def on_fetch(self, <b>response</b>):
+            <b>do_something_with_response(response)</b>
             self.render("template.html")
 </pre>
 
@@ -356,11 +365,11 @@ title: Futures (cont.)
 title: Futures
 
 <pre class="prettyprint" data-lang="python">
-    def fetch(self, request, callback=None, **kwargs):
+    def fetch(self, request, <b>callback</b>=None, **kwargs):
         ...
         <b>future = TracebackFuture()</b>
         if callback is not None:
-            callback = stack_context.wrap(callback)
+            callback = <b>stack_context.wrap(callback)</b>
 
             def handle_future(future):
                 exc = future.exception()
@@ -368,8 +377,8 @@ title: Futures
                     ...
                 else:
                     response = <b>future.result()</b>
-                self.io_loop.add_callback(callback, response)
-            <b>future.add_done_callback(handle_future)</b>
+                <b>self.io_loop.add_callback(callback, response)</b>
+            <b>future</b>.add_done_callback(handle_future)
 
 </pre>
 
@@ -433,10 +442,10 @@ subtitle: Callback Style:
             http_client = AsyncHTTPClient()
             http_client.fetch("http://example.com",
                               <b>callback=self.on_fetch</b>)
-        <b>                              
-        def on_fetch(self, response):
-            do_something_with_response(response)
-            self.render("template.html")</b>
+                                      
+        def <b>on_fetch</b>(self, response):
+            <b>do_something_with_response(response)</b>
+            self.render("template.html")
 </pre>
 
 ---
@@ -466,17 +475,17 @@ title: Futures (cont.)
 title: Monads.
 class: nobackground fill
 
-![Deal with it ](img/deal-with-it.gif.gif)
+![Deal with it ](img/deal-with-it.gif)
 
 ---
 
 title: Conclusion
 
-- An IO Loop (event loop) on a single thread is good strategy to handle 10k 
-  connections if you can afford...
-- Using coroutines (greenlets) which makes async calls elegants and slimmer
+- An IO Loop (event loop) on a single thread is good strategy to handle 
+  concurrent connections.
+- Using coroutines (greenlets) makes async calls elegant and slim,
   but implicit.
-- Lazy IO is a great honking idea.
+- Lazy IO is a great honking idea!.
 
 ---
 
