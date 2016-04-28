@@ -133,14 +133,13 @@ Se acuerdan que admite una URL?
 
 # Referencias:
 
-- https://github.com/pydanny/cookiecutter-django
-- http://the-hitchhikers-guide-to-packaging.readthedocs.io/
-- http://www.diveintopython3.net/packaging.html
-
+- [cookiecutter-django](https://github.com/pydanny/cookiecutter-django)
+- [hitchhikers guide to packaging](http://the-hitchhikers-guide-to-packaging.readthedocs.io/)
+- [dive into python](http://www.diveintopython3.net/packaging.html)
 
 ----------
 
-# gracias
+# Preguntas?
     
 
 
